@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><title>Accounts</title></head>
+<body>
+  <h2>All Accounts</h2>
+  <table border="1">
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Type</th>
+    </tr>
+    {% for a in accounts %}
+    <tr>
+      <td>{{ a.id }}</td>
+      <td>{{ a.username }}</td>
+      <td>{{ a.email }}</td>
+      <td>{{ a.account_type }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
