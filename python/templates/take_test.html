@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Test</title>
+    <link rel="stylesheet" href="{{ url_for('styles', filename='base.css') }}">
+</head>
+<body>
+<header>
+    <h1>Exam System</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/register">Register</a>
+        <a href="/accounts">Accounts</a>
+        <a href="/create_test">Create Test</a>
+    </nav>
+</header>
+<main>
+    <h2>{{ test.test_name }}</h2>
+    <form method="POST">
+        <label for="student_id">Select Student:</label>
+        <select name="student_id" required>
+            {% for student in students %}
+            <option value="{{ student.id }}">{{ student.username }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        {% for question in questions %}
+            <label>{{ loop.index }}. {{ question.question_text }}</label>
+            <input type="text" name="question_{{ question.id }}" required><br><br>
+        {% endfor %}
+        <input type="submit" value="Submit Test">
+    </form>
+</main>
+<footer>
+    <p>&copy; 2025 Exam System</p>
+</footer>
+</body>
+</html>

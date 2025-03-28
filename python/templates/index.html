@@ -1,10 +1,27 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('styles', filename='base.css') }}">
 
-<!DOCTYPE html>
-<html>
-<head><title>Home</title></head>
+</head>
 <body>
-  <h1>Welcome to the Exam Management System</h1>
-  <p><a href="/register">Register</a></p>
-  <p><a href="/accounts">View Accounts</a></p>
+<header>
+    <h1>Exam System</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/register">Register</a>
+        <a href="/accounts">Accounts</a>
+        <a href="/create_test">Create Test</a>
+    </nav>
+</header>
+<main>
+    <h2>Welcome to the Exam System</h2>
+    <p>Use the navigation bar above to register, view accounts, or create a test.</p>
+</main>
+<footer>
+    <p>&copy; 2025 Exam System</p>
+</footer>
 </body>
 </html>

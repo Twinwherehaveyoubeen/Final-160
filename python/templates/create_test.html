@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Test</title>
+    <link rel="stylesheet" href="{{ url_for('styles', filename='base.css') }}">
+</head>
+<body>
+<header>
+    <h1>Exam System</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/register">Register</a>
+        <a href="/accounts">Accounts</a>
+        <a href="/create_test">Create Test</a>
+    </nav>
+</header>
+<main>
+    <h2>Create a New Test</h2>
+    <form method="POST">
+        <label for="test_name">Test Name:</label>
+        <input type="text" name="test_name" required>
+
+        <label for="teacher_id">Teacher:</label>
+        <select name="teacher_id" required>
+            {% for teacher in teachers %}
+            <option value="{{ teacher.id }}">{{ teacher.username }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="questions">Questions:</label>
+        <textarea name="questions" placeholder="Enter one question per line" rows="6" required></textarea>
+
+        <input type="submit" value="Create Test">
+    </form>
+</main>
+<footer>
+    <p>&copy; 2025 Exam System</p>
+</footer>
+</body>
+</html>

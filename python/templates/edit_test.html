@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accounts</title>
+    <title>Edit Test</title>
     <link rel="stylesheet" href="{{ url_for('styles', filename='base.css') }}">
 </head>
 <body>
@@ -17,23 +17,12 @@
     </nav>
 </header>
 <main>
-    <h2>All Accounts</h2>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Type</th>
-        </tr>
-        {% for acc in accounts %}
-        <tr>
-            <td>{{ acc.id }}</td>
-            <td>{{ acc.username }}</td>
-            <td>{{ acc.email }}</td>
-            <td>{{ acc.account_type }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <h2>Edit Test: {{ test.test_name }}</h2>
+    <form method="POST">
+        <label for="test_name">New Test Name:</label>
+        <input type="text" name="test_name" value="{{ test.test_name }}" required>
+        <input type="submit" value="Update Test">
+    </form>
 </main>
 <footer>
     <p>&copy; 2025 Exam System</p>
