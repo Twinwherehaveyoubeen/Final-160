@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, session
 import mysql.connector
 from datetime import datetime
 
@@ -86,6 +86,10 @@ def take_test(test_id):
 
 @app.route("/edit/<int:test_id>", methods=["GET", "POST"])
 def edit_test(test_id):
+    if 'account_type' not in session or session['account_type'] != 'teacher':
+        flash("Only teachers can edit tests.")
+        return redirect("/")
+
     conn = connect_db()
     cur = conn.cursor(dictionary=True)
     if request.method == "POST":
@@ -101,6 +105,21 @@ def edit_test(test_id):
         cur.close()
         conn.close()
         return render_template("edit_test.html", test=test)
+
+@app.route("/delete/<int:test_id>", methods=["POST"])
+def delete_test(test_id):
+    if 'account_type' not in session or session['account_type'] != 'teacher':
+        flash("Only teachers can delete tests.")
+        return redirect("/")
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM tests WHERE id = %s", (test_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash("Test deleted.")
+    return redirect("/tests")
 
 @app.route("/create_test", methods=["GET", "POST"])
 def create_test():
@@ -201,6 +220,35 @@ def student_results():
     cur.close()
     conn.close()
     return render_template("student_results.html", students=students, results=results)
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+
+        conn = connect_db()
+        cur = conn.cursor(dictionary=True)
+        cur.execute("SELECT * FROM accounts WHERE email = %s AND password = %s", (email, password))
+        account = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if account:
+            session['user_id'] = account['id']
+            session['account_type'] = account['account_type']
+            session['username'] = account['username']
+            flash("Logged in successfully!")
+            return redirect("/")
+        else:
+            flash("Invalid login. Try again.")
+
+    return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("You have been logged out.")
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)
