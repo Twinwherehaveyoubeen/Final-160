@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Grade Test</h2>
+
+{% if attempts %}
+    <table border="1">
+        <tr>
+            <th>Student</th>
+            <th>Test</th>
+            <th>Enter Marks</th>
+            <th>Submit</th>
+        </tr>
+        {% for attempt in attempts %}
+        <tr>
+            <form action="/grade_test" method="POST">
+                <td>{{ attempt.student_name }}</td>
+                <td>{{ attempt.test_name }}</td>
+                <td>
+                    <input type="hidden" name="student_id" value="{{ attempt.student_id }}">
+                    <input type="hidden" name="test_id" value="{{ attempt.test_id }}">
+                    <input type="number" name="marks" required>
+                </td>
+                <td>
+                    <button type="submit">Save</button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No test attempts found.</p>
+{% endif %}
+
+{% endblock %}

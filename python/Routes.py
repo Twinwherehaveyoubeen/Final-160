@@ -129,5 +129,78 @@ def create_test():
     conn.close()
     return render_template("create_test.html", teachers=teachers)
 
+@app.route("/tests")
+def tests():
+    conn = connect_db()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("SELECT * FROM tests")
+    tests = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template("tests.html", tests=tests)
+
+@app.route("/grade_test", methods=["GET", "POST"])
+def grade_test():
+    conn = connect_db()
+    cur = conn.cursor(dictionary=True)
+
+    if request.method == 'POST':
+        student_id = request.form['student_id']
+        test_id = request.form['test_id']
+        marks = request.form['marks']
+        cur.execute("REPLACE INTO marks (student_id, test_id, marks) VALUES (%s, %s, %s)", (student_id, test_id, marks))
+        conn.commit()
+        flash("Marks submitted successfully")
+
+    cur.execute("SELECT ta.student_id, ta.test_id, a.username AS student_name, t.test_name FROM test_attempts ta JOIN accounts a ON ta.student_id = a.id JOIN tests t ON ta.test_id = t.id")
+    attempts = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('grade_test.html', attempts=attempts)
+
+@app.route("/tests_info")
+def tests_info():
+    conn = connect_db()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("SELECT t.id, t.test_name, a.username AS teacher, COUNT(ta.student_id) AS taken_by FROM tests t JOIN accounts a ON t.teacher_id = a.id LEFT JOIN test_attempts ta ON t.id = ta.test_id GROUP BY t.id")
+    tests = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template("tests_info.html", tests=tests)
+
+@app.route("/test_details/<int:test_id>")
+def test_details(test_id):
+    conn = connect_db()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("""
+        SELECT a.username AS student, m.marks, t.test_name, t.id, gr.username AS graded_by
+        FROM test_attempts ta
+        JOIN accounts a ON ta.student_id = a.id
+        JOIN tests t ON ta.test_id = t.id
+        LEFT JOIN marks m ON m.student_id = a.id AND m.test_id = t.id
+        LEFT JOIN accounts gr ON gr.id = t.teacher_id
+        WHERE ta.test_id = %s
+    """, (test_id,))
+    details = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template("test_details.html", details=details)
+
+@app.route("/student_results")
+def student_results():
+    student_id = request.args.get('student_id')
+    conn = connect_db()
+    cur = conn.cursor(dictionary=True)
+    if student_id:
+        cur.execute("SELECT t.test_name, m.marks FROM marks m JOIN tests t ON m.test_id = t.id WHERE m.student_id = %s", (student_id,))
+        results = cur.fetchall()
+    else:
+        results = []
+    cur.execute("SELECT id, username FROM accounts WHERE account_type='student'")
+    students = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template("student_results.html", students=students, results=results)
+
 if __name__ == "__main__":
     app.run(debug=True)

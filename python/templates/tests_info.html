@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>All Tests Info</h2>
+
+{% if tests %}
+    <ul>
+        {% for test in tests %}
+            <li>
+                <strong>{{ test.test_name }}</strong><br>
+                Created by: {{ test.teacher }}<br>
+                Taken by: {{ test.taken_by }} student(s)<br>
+                <a href="/test_details/{{ test.id }}">View Details</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No tests found.</p>
+{% endif %}
+{% endblock %}
